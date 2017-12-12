@@ -71,12 +71,12 @@ public class Agent : MonoBehaviour
     
     public void OnGUI()
     {
-        GUI.Label(new Rect (350, 20, 160, 75), "Thirst: " + Thirst.NormalisedImportance.ToString());
-        GUI.Label(new Rect(350, 40, 160, 75), "Hunger: " + Hunger.NormalisedImportance.ToString());
-        GUI.Label(new Rect(350, 60, 160, 75), "Energy: " + Energy.NormalisedImportance.ToString());
-        GUI.Label(new Rect(350, 120, 160, 100), "Urine: " + Urine.NormalisedImportance.ToString());
-        GUI.Label(new Rect(350, 80, 160, 75), "Boredom: " + Boredom.NormalisedImportance.ToString());
-        GUI.Label(new Rect(350, 100, 160, 100), "Knowledge: " + Knowledge.NormalisedImportance.ToString());
+        GUI.Label(new Rect (550, 20, 160, 75), "Thirst: " + Thirst.NormalisedImportance.ToString());
+        GUI.Label(new Rect(550, 40, 160, 75), "Hunger: " + Hunger.NormalisedImportance.ToString());
+        GUI.Label(new Rect(550, 60, 160, 75), "Energy: " + Energy.NormalisedImportance.ToString());
+        GUI.Label(new Rect(550, 120, 160, 100), "Urine: " + Urine.NormalisedImportance.ToString());
+        GUI.Label(new Rect(550, 80, 160, 75), "Boredom: " + Boredom.NormalisedImportance.ToString());
+        GUI.Label(new Rect(550, 100, 160, 100), "Knowledge: " + Knowledge.NormalisedImportance.ToString());
     }
 
     private void Update()
