@@ -46,10 +46,17 @@ public class SeekTarget : MonoBehaviour
      *waitTime to the time applied to the desire/target*/
     public void SetTarget(Vector3 Target, float WaitTime)
     {
+        //normalize it to get direction
+        target = target.normalized;
+
+        //now make a new raycast hit
+        //and draw a line from the AI out some distance in the ‘forward direction
+
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, 20.0f))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 2.0f))
         {
+
             //check that its not hitting itself
             //then add the normalised hit direction to your direction plus some repulsion force -in my case // 400f
 
@@ -59,6 +66,7 @@ public class SeekTarget : MonoBehaviour
 
                 target += hit.normal * 2.5f;
             }
+
         }
 
         //now make two more raycasts out to the left and right to make the cornering more accurate and reducing collisions more
@@ -69,7 +77,7 @@ public class SeekTarget : MonoBehaviour
         leftR.x -= 2;
         rightR.x += 2;
 
-        if (Physics.Raycast(leftR, -transform.right, out hit, 20.0f))
+        if (Physics.Raycast(leftR, transform.forward, out hit, 2.0f))
         {
             if (hit.transform != transform)
             {
@@ -78,7 +86,7 @@ public class SeekTarget : MonoBehaviour
             }
 
         }
-        if (Physics.Raycast(rightR, transform.right, out hit, 20.0f))
+        if (Physics.Raycast(rightR, transform.forward, out hit, 2.0f))
         {
             if (hit.transform != transform)
             {
@@ -93,13 +101,13 @@ public class SeekTarget : MonoBehaviour
         Quaternion lookAtTarget = Quaternion.LookRotation(target);
 
         //then slerp the rotation
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookAtTarget, Time.deltaTime * 10.0f);
-
+        // transform.rotation = Quaternion.Slerp(transform.rotation, lookAtTarget, Time.deltaTime * 10.0f);
+        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
         //finally add some propulsion to move the object forward based on this rotation
         //mine is a little more complicated than below but you hopefully get the idea…
 
-        transform.position += transform.right * 5.0f * Time.deltaTime;
-    
+        transform.position += transform.forward * 5.0f * Time.deltaTime;
+
         if (state == State.Idle)
         {
             target = Target;
