@@ -11,6 +11,10 @@ TagManager:
   - book
   - console
   - toilet
+  - Happy
+  - Sad
+  - Angry
+  - Scared
   layers:
   - Default
   - TransparentFX

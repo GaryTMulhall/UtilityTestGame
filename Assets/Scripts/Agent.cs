@@ -55,7 +55,16 @@ public class Agent : MonoBehaviour
             return new Desire[] { Thirst, Hunger, Energy, Boredom, Knowledge, Urine };
         }
     }
-
+    //an enum to hold the various emotional states available to agents
+    public enum EmotionalStates
+    {
+        Happy,
+        Sad,
+        Angry,
+        Scared
+    }
+    //creating a public instance of the EmotionalStates enum to allow manipulation
+    public EmotionalStates emotionalState;
     public float targetRange = 0.1f;
 
     public Vector2 agentVelocity;
@@ -67,20 +76,24 @@ public class Agent : MonoBehaviour
     private void Start()
     {
         seekTarget = GetComponent<SeekTarget>();
-    }
-    
-    public void OnGUI()
-    {
-        GUI.Label(new Rect (550, 20, 160, 75), "Thirst: " + Thirst.NormalisedImportance.ToString());
-        GUI.Label(new Rect(550, 40, 160, 75), "Hunger: " + Hunger.NormalisedImportance.ToString());
-        GUI.Label(new Rect(550, 60, 160, 75), "Energy: " + Energy.NormalisedImportance.ToString());
-        GUI.Label(new Rect(550, 120, 160, 100), "Urine: " + Urine.NormalisedImportance.ToString());
-        GUI.Label(new Rect(550, 80, 160, 75), "Boredom: " + Boredom.NormalisedImportance.ToString());
-        GUI.Label(new Rect(550, 100, 160, 100), "Knowledge: " + Knowledge.NormalisedImportance.ToString());
+        //setting the emotional state for agents to be random on start
+        emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
+
     }
 
+    //public void OnGUI()
+    //{
+    //    GUI.Label(new Rect (550, 20, 160, 75), "Thirst: " + Thirst.NormalisedImportance.ToString());
+    //    GUI.Label(new Rect(550, 40, 160, 75), "Hunger: " + Hunger.NormalisedImportance.ToString());
+    //    GUI.Label(new Rect(550, 60, 160, 75), "Energy: " + Energy.NormalisedImportance.ToString());
+    //    GUI.Label(new Rect(550, 120, 160, 100), "Urine: " + Urine.NormalisedImportance.ToString());
+    //    GUI.Label(new Rect(550, 80, 160, 75), "Boredom: " + Boredom.NormalisedImportance.ToString());
+    //    GUI.Label(new Rect(550, 100, 160, 100), "Knowledge: " + Knowledge.NormalisedImportance.ToString());
+    //}
+
     private void Update()
-    {/*Forcing all desires to be clamped between a value of 0 and 100
+    {
+        /*Forcing all desires to be clamped between a value of 0 and 100
       *while ensuring they decrease over time multiplied by the "Loss" value attached to each desire*/
         foreach (var desire in AllDesires)
         {
@@ -114,5 +127,59 @@ public class Agent : MonoBehaviour
                 desire.Value += desire.Gain;
             }
         }
+        SetColours();
+        AssignValue();
+        //FindTarget();
     }
+
+    void SetColours()
+    {
+        SpriteRenderer agentRenderer = GetComponent<SpriteRenderer>();
+        if (emotionalState == EmotionalStates.Happy)
+        {
+            agentRenderer.color = Color.yellow;
+        }
+        if (emotionalState == EmotionalStates.Sad)
+        {
+            agentRenderer.color = Color.blue;
+        }
+        if (emotionalState == EmotionalStates.Angry)
+        {
+            agentRenderer.color = Color.red;
+        }
+        if (emotionalState == EmotionalStates.Scared)
+        {
+            agentRenderer.color = Color.black;
+        }
+    }
+    void AssignValue()
+    {
+        if (emotionalState == EmotionalStates.Happy)
+        {
+            transform.tag = "Happy";
+        }
+        else if (emotionalState == EmotionalStates.Sad)
+        {
+            transform.tag = "Sad";
+        }
+        else if (emotionalState == EmotionalStates.Angry)
+        {
+            transform.tag = "Angry";
+        }
+        else if (emotionalState == EmotionalStates.Scared)
+        {
+            transform.tag = "Scared";
+        }
+    }
+    //void FindTarget()
+    //{
+    //    if (emotionalState == EmotionalStates.Happy)
+    //    {
+    //        seekTarget.SetTarget(GameObject.FindGameObjectWithTag("Sad").transform.position, 5.0f);
+    //    }
+    //    if (emotionalState == EmotionalStates.Sad)
+    //    {
+    //        seekTarget.SetTarget(GameObject.FindGameObjectWithTag("Isolation").transform.position, 5.0f);
+    //    }
+    //}
 }
