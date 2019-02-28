@@ -55,6 +55,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Agent.cs" />
      <Compile Include="Assets\Scripts\SeekTarget.cs" />
+     <Compile Include="Assets\Scripts\SpawnAgents.cs" />
      <Compile Include="Assets\Scripts\WeightedTargets.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>C:/Users/gmulha200/Desktop/UtilityAIExample/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

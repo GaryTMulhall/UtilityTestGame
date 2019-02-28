@@ -71,14 +71,13 @@ public class Agent : MonoBehaviour
 
     public List<WeightedTargets> desiredTarget; //Creating a list of all potential targets which will be selected based on the agents requirements
 
-    SeekTarget seekTarget;
+    protected SeekTarget seekTarget;
 
     private void Start()
     {
         seekTarget = GetComponent<SeekTarget>();
         //setting the emotional state for agents to be random on start
-        emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
-
+        //emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
     }
 
     //public void OnGUI()
@@ -129,7 +128,7 @@ public class Agent : MonoBehaviour
         }
         SetColours();
         AssignValue();
-        //FindTarget();
+        CollisionChecks();
     }
 
     void SetColours()
@@ -171,15 +170,15 @@ public class Agent : MonoBehaviour
             transform.tag = "Scared";
         }
     }
-    //void FindTarget()
-    //{
-    //    if (emotionalState == EmotionalStates.Happy)
-    //    {
-    //        seekTarget.SetTarget(GameObject.FindGameObjectWithTag("Sad").transform.position, 5.0f);
-    //    }
-    //    if (emotionalState == EmotionalStates.Sad)
-    //    {
-    //        seekTarget.SetTarget(GameObject.FindGameObjectWithTag("Isolation").transform.position, 5.0f);
-    //    }
-    //}
+    void CollisionChecks()
+    {
+        if (emotionalState == EmotionalStates.Happy)
+        {
+            if (transform.position.x < GameObject.FindGameObjectWithTag("Sad").transform.position.x)
+            {
+                print("COLISSION");
+                emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
+            }
+        }
+    }
 }

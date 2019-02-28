@@ -6,6 +6,7 @@ public class SeekTarget : MonoBehaviour
     public float maxSpeed = 0.6f; //Setting the maximum speed the agent can achieve
     public float arrivalRadius = 0.01f;
     public Vector3 target;
+    Agent agent;
     float waitTime;
 
     enum State { Idle, Moving, Busy } //States available to the agent
@@ -20,7 +21,10 @@ public class SeekTarget : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         state = State.Idle;
     }
-
+    void Start()
+    {
+        agent = FindObjectOfType<Agent>();
+    }
     private void FixedUpdate()
     {
         /*Setting what happens if the agent switches to the "moving" state
@@ -46,68 +50,6 @@ public class SeekTarget : MonoBehaviour
      *waitTime to the time applied to the desire/target*/
     public void SetTarget(Vector3 Target, float WaitTime)
     {
-        //normalize it to get direction
-        target = target.normalized;
-
-        //now make a new raycast hit
-        //and draw a line from the AI out some distance in the ‘forward direction
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 2.0f))
-        {
-
-            //check that its not hitting itself
-            //then add the normalised hit direction to your direction plus some repulsion force -in my case // 400f
-
-            if (hit.transform != transform)
-            {
-                Debug.DrawLine(transform.position, hit.point, Color.red);
-
-                target += hit.normal * 2.5f;
-            }
-
-        }
-
-        //now make two more raycasts out to the left and right to make the cornering more accurate and reducing collisions more
-
-        Vector3 leftR = transform.position;
-        Vector3 rightR = transform.position;
-
-        leftR.x -= 2;
-        rightR.x += 2;
-
-        if (Physics.Raycast(leftR, transform.forward, out hit, 2.0f))
-        {
-            if (hit.transform != transform)
-            {
-                Debug.DrawLine(leftR, hit.point, Color.red);
-                target += hit.normal * 2.5f;
-            }
-
-        }
-        if (Physics.Raycast(rightR, transform.forward, out hit, 2.0f))
-        {
-            if (hit.transform != transform)
-            {
-                Debug.DrawLine(rightR, hit.point, Color.red);
-
-                target += hit.normal * 2.5f;
-            }
-        }
-
-        // then set the look rotation toward this new target based on the collisions
-
-        Quaternion lookAtTarget = Quaternion.LookRotation(target);
-
-        //then slerp the rotation
-        // transform.rotation = Quaternion.Slerp(transform.rotation, lookAtTarget, Time.deltaTime * 10.0f);
-        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-        //finally add some propulsion to move the object forward based on this rotation
-        //mine is a little more complicated than below but you hopefully get the idea…
-
-        transform.position += transform.forward * 5.0f * Time.deltaTime;
-
         if (state == State.Idle)
         {
             target = Target;
