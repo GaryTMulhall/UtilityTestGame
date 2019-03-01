@@ -66,32 +66,24 @@ public class Agent : MonoBehaviour
     //creating a public instance of the EmotionalStates enum to allow manipulation
     public EmotionalStates emotionalState;
     public float targetRange = 0.1f;
-
+    int getRandom;
     public Vector2 agentVelocity;
 
     public List<WeightedTargets> desiredTarget; //Creating a list of all potential targets which will be selected based on the agents requirements
 
     protected SeekTarget seekTarget;
-
+    float timer;
     private void Start()
     {
+        timer = 0;
         seekTarget = GetComponent<SeekTarget>();
         //setting the emotional state for agents to be random on start
         //emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
     }
 
-    //public void OnGUI()
-    //{
-    //    GUI.Label(new Rect (550, 20, 160, 75), "Thirst: " + Thirst.NormalisedImportance.ToString());
-    //    GUI.Label(new Rect(550, 40, 160, 75), "Hunger: " + Hunger.NormalisedImportance.ToString());
-    //    GUI.Label(new Rect(550, 60, 160, 75), "Energy: " + Energy.NormalisedImportance.ToString());
-    //    GUI.Label(new Rect(550, 120, 160, 100), "Urine: " + Urine.NormalisedImportance.ToString());
-    //    GUI.Label(new Rect(550, 80, 160, 75), "Boredom: " + Boredom.NormalisedImportance.ToString());
-    //    GUI.Label(new Rect(550, 100, 160, 100), "Knowledge: " + Knowledge.NormalisedImportance.ToString());
-    //}
-
     private void Update()
     {
+        timer += Time.deltaTime;
         /*Forcing all desires to be clamped between a value of 0 and 100
       *while ensuring they decrease over time multiplied by the "Loss" value attached to each desire*/
         foreach (var desire in AllDesires)
@@ -106,6 +98,17 @@ public class Agent : MonoBehaviour
         Vector3 atFridge = Hunger.Target.position - transform.position;
         if (atFridge.magnitude < targetRange)
         {
+            if (transform.position == GameObject.FindObjectOfType<Agent>().transform.position)
+            {
+                if (getRandom <=2)
+                {
+                    emotionalState = EmotionalStates.Angry;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Happy;
+                }
+            }
             Hunger.Value += Hunger.Gain;
             Thirst.Value += Thirst.Gain;
         }
@@ -116,7 +119,19 @@ public class Agent : MonoBehaviour
             Hunger.Value += Hunger.Gain;
             Thirst.Value += Thirst.Gain;
         }
-
+        Vector3 atConsole = Boredom.Target.position - transform.position;
+        if(atConsole.magnitude < targetRange)
+        {
+            emotionalState = EmotionalStates.Happy;
+            if (getRandom <= 2)
+            {
+                emotionalState = EmotionalStates.Angry;
+            }
+            else
+            {
+                emotionalState = EmotionalStates.Happy;
+            }
+        }
         foreach (var desire in AllDesires)
         {
             Vector3 distance = desire.Target.position - transform.position;
@@ -129,6 +144,7 @@ public class Agent : MonoBehaviour
         SetColours();
         AssignValue();
         CollisionChecks();
+        print(getRandom);
     }
 
     void SetColours()
@@ -172,12 +188,143 @@ public class Agent : MonoBehaviour
     }
     void CollisionChecks()
     {
+        getRandom = UnityEngine.Random.Range(0, 3);
+        //Happy
         if (emotionalState == EmotionalStates.Happy)
         {
             if (transform.position.x < GameObject.FindGameObjectWithTag("Sad").transform.position.x)
             {
-                print("COLISSION");
                 emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
+            }
+            else if (transform.position.x < GameObject.FindGameObjectWithTag("Scared").transform.position.x)
+            {
+                if (getRandom <= 1)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Happy;
+                }
+            }
+            else if (transform.position.x < GameObject.FindGameObjectWithTag("Angry").transform.position.x)
+            {
+                if (getRandom <= 2)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Angry;
+                }
+            }
+        }
+        //Sad
+        if (emotionalState == EmotionalStates.Sad)
+        {
+            if (transform.position.x < GameObject.FindGameObjectWithTag("Scared").transform.position.x)
+            {
+                if (getRandom <= 1)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Sad;
+                }
+            }
+           else if (transform.position.x < GameObject.FindGameObjectWithTag("Angry").transform.position.x)
+            {
+                if (timer >= 5f)
+                {
+                    emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
+                    timer = 0;
+                }
+                if (getRandom <= 1)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else if (getRandom == 2)
+                {
+                    emotionalState = EmotionalStates.Angry;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Sad;
+                }
+            }
+        }
+        //Angry
+        if (emotionalState == EmotionalStates.Angry)
+        {
+            if(timer >=5f)
+            {
+               if (getRandom <=2)
+                {
+                    emotionalState = EmotionalStates.Happy;
+                    timer = 0;
+                }
+               else
+                {
+                    emotionalState = EmotionalStates.Sad;
+                    timer = 0;
+                }
+            }
+            if (transform.position.x < GameObject.FindGameObjectWithTag("Sad").transform.position.x)
+            {
+                if (getRandom <= 2)
+                {
+                    emotionalState = EmotionalStates.Angry;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Sad;
+                }
+            }
+            else if (transform.position.x < GameObject.FindGameObjectWithTag("Scared").transform.position.x)
+            {
+                if (getRandom <= 3)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Angry;
+                }
+            }
+           else if (transform.position.x < GameObject.FindGameObjectWithTag("Angry").transform.position.x)
+            {
+                emotionalState = EmotionalStates.Angry;
+            }
+        }
+        //Scared
+        if (emotionalState == EmotionalStates.Scared)
+        {
+            if (transform.position.x < GameObject.FindGameObjectWithTag("Sad").transform.position.x)
+            {
+                emotionalState = (EmotionalStates)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EmotionalStates)).Length);
+            }
+           else  if (transform.position.x < GameObject.FindGameObjectWithTag("Scared").transform.position.x)
+            {
+                if (getRandom <= 1)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Happy;
+                }
+            }
+           else if (transform.position.x < GameObject.FindGameObjectWithTag("Angry").transform.position.x)
+            {
+                if (getRandom <= 2)
+                {
+                    emotionalState = EmotionalStates.Scared;
+                }
+                else
+                {
+                    emotionalState = EmotionalStates.Angry;
+                }
             }
         }
     }
